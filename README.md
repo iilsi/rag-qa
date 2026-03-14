@@ -23,29 +23,6 @@ It is meant to:
 
 ---
 
-## Environment Variable & Privacy
-
-The OpenAI client reads the key from the `OPENAI_API_KEY` environment variable:
-
-- In the code you will see:
-
-  ```python
-  from openai import OpenAI
-  import os
-
-  client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-  ```
-
-- Before running, set the environment variable locally, for example (macOS / Linux):
-
-  ```bash
-  export OPENAI_API_KEY="your_real_key_here"
-  ```
-
-Do not commit `.env` files or any real keys to the repository.
-
----
-
 ## How to Run
 
 **Requirements:**
