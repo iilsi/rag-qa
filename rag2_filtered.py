@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import glob
 import numpy as np
 import faiss
@@ -7,7 +8,7 @@ import PyPDF2
 from dataclasses import dataclass
 from typing import List, Dict
 
-
+load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 pdf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pdfs")

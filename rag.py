@@ -1,8 +1,10 @@
 import os
+from dotenv import load_dotenv
 import numpy as np
 import faiss
 from openai import OpenAI
 
+load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 def get_embeddings(texts):
     response = client.embeddings.create(

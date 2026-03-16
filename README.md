@@ -21,12 +21,17 @@ It is meant to:
     - `filtered_retrieve`: retrieval with page range / file filters.
     - `rag_answer_filtered`: full RAG flow (retrieve + call LLM).
 
+- `rag3_memory.py`
+  - Builds on `rag2_filtered.py`: loads PDFs from `pdfs/`, chunks (size 800, overlap 150), FAISS index.
+  - Adds conversation memory (sliding window), optional history summarization (`/sum`), and one agent that switches between general chat and RAG via keyword intent.
+
 ---
 
 ## How to Run
 
-**Requirements:**
-
 - Python 3.9+ (recommended).
+- `pip install -r requirements.txt`
+- Put `OPENAI_API_KEY` in a `.env` file (see `.env.example`).
+- Run `python rag.py`, `python rag2_filtered.py`, or `python rag3_memory.py`. For the latter two, put PDFs in `pdfs/`.
 
 
