@@ -81,3 +81,12 @@ class RAGQASystem:
         )
 
         return completion.choices[0].message.content.strip(), retrieved
+
+
+if __name__ == "__main__":
+    rag = RAGQASystem(chunks, client)
+    answer, retrieved = rag.answer("What is FAISS?")
+    print("Answer:", answer)
+    print("Retrieved:")
+    for r in retrieved:
+        print(f"  [{r['rank']}] score={r['score']:.3f} | {r['text']}")

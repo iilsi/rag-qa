@@ -58,7 +58,7 @@ class ChatAgent:
 
 agent = ChatAgent(client, max_turns=5)
 
-# --- Uncomment to run basic chat demo (no RAG) ---
+# --- Basic chat demo (no RAG) ---
 # print("Agent starts. Input content to start, and input 'exit' to end.")
 # while True:
 #     user_input = input("User: ")
@@ -142,7 +142,7 @@ class SummarizingChatAgent:
 
 agent2 = SummarizingChatAgent(client, max_turns=5)
 
-# --- Uncomment to run summarization chat demo (no RAG) ---
+# --- Summarization chat demo (no RAG) ---
 # while True:
 #     user_input = input("User: ")
 #     if user_input.strip().lower() in ["exit", "quit"]:
@@ -152,7 +152,7 @@ agent2 = SummarizingChatAgent(client, max_turns=5)
 #         agent2.summarize_and_compress()
 #         print("Summary: ", agent2.summary)
 #         continue
-#     reply = agent2.chat(user_input)
+#     reply = agent2.chat(user_input)1
 #     print("Agent: ", reply)
 
 class RAGTool:
@@ -307,7 +307,6 @@ class RAGQASystem:
         self.client = client
         self.embed_model = embed_model
 
-        # --- Build vector index ---
         texts = [c["text"] for c in chunks]
         embs = self._embed_texts(texts)
         embs = embs / np.linalg.norm(embs, axis=1, keepdims=True)
@@ -316,9 +315,6 @@ class RAGQASystem:
         self.index = faiss.IndexFlatIP(dim)
         self.index.add(embs)
 
-    # -----------------------------
-    #  Embedding
-    # -----------------------------
     def _embed_texts(self, texts):
         resp = self.client.embeddings.create(
             model=self.embed_model,
@@ -332,9 +328,6 @@ class RAGQASystem:
         emb = emb / np.linalg.norm(emb, axis=1, keepdims=True)
         return emb
 
-    # -----------------------------
-    #  Retrieve
-    # -----------------------------
     def retrieve(self, query, top_k=4):
         q_emb = self._embed_query(query)
         D, I = self.index.search(q_emb, top_k)
@@ -351,29 +344,25 @@ class RAGQASystem:
             })
         return results
 
-    # -----------------------------
-    #  RAG answer
-    # -----------------------------
     def answer(self, query, top_k=4, model="gpt-4.1-mini"):
         retrieved = self.retrieve(query, top_k=top_k)
 
-        # Build context
         context = "\n".join(
             f"[{d['source']} p{d['page']}] {d['text']}" for d in retrieved
         )
 
         prompt = f"""
-You are a precise QA assistant. Below are retrieved snippets from PDF documents. Answer strictly based on these snippets.
-If the content does not provide an answer, reply: "I don't know."
+            You are a precise QA assistant. Below are retrieved snippets from PDF documents. Answer strictly based on these snippets.
+            If the content does not provide an answer, reply: "I don't know."
 
-[Retrieved content]:
-{context}
+            [Retrieved content]:
+            {context}
 
-[Question]:
-{query}
+            [Question]:
+            {query}
 
-Give an accurate answer in English:
-"""
+            Give an accurate answer based on the retrieved content. 
+            """
 
         completion = self.client.chat.completions.create(
             model=model,
@@ -389,19 +378,13 @@ if not all_chunks:
 else:
     rag_system = RAGQASystem(all_chunks, client)
 
-    query = "What is the main content of this resume?"
-    ans, ctx = rag_system.answer(query, top_k=4)
-    print("Answer:", ans)
-    print("\nContext:")
-    for c in ctx:
-        print("-", c["source"], "page", c['page'], "score", round(c['score'], 3))
 
     rag_system = RAGQASystem(all_chunks, client)
     rag_tool = RAGTool(rag_system)
     agent = ToolCallingAgent(client, rag_tool=rag_tool, max_turns=5)
 
     print("Agent starts. Type 'exit' or 'quit' to end.")
-    print("To use RAG (query your PDFs), include words like: pdf, document, content, what is, definition, chapter, resume.")
+    print("To use RAG (query your PDFs), include words like: pdf, document, content, what is, how to use, etc.\n")
     print("Otherwise the agent replies in general chat.\n")
 
     while True:
