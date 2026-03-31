@@ -11,7 +11,7 @@ from typing import List, Dict
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-pdf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pdfs")
+pdf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "pdfs")
 pdf_paths = glob.glob(os.path.join(pdf_dir, "*.pdf"))
 
 documents = []
@@ -143,10 +143,10 @@ def rag_answer_filtered(query, top_k=3, model_name="gpt-4.1-mini", page_range=No
     )
     return completion.choices[0].message.content.strip(), retrieved
 
-q= ""
+q= "how many colleges are there in UOC?"
 answer, _ = rag_answer_filtered(
     query=q,
     top_k=3,
-    source=""
+    source="uoc_2024_ugp_welcome.pdf"
 )
 print("question:",q, "answer:",answer)

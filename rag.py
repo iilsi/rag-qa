@@ -85,7 +85,7 @@ class RAGQASystem:
 
 if __name__ == "__main__":
     rag = RAGQASystem(chunks, client)
-    answer, retrieved = rag.answer("What is FAISS?")
+    answer, retrieved = rag.answer("What is my FAISS?")
     print("Answer:", answer)
     print("Retrieved:")
     for r in retrieved:

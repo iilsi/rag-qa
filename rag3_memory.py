@@ -209,7 +209,7 @@ class ToolCallingAgent:
     def reset(self):
         self.memory.clear()
 
-pdf_dir = "./pdfs"   
+pdf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "pdfs")
 pdf_paths = glob.glob(os.path.join(pdf_dir, "*.pdf"))
 
 documents = []
